@@ -40,6 +40,9 @@ nav button{flex:1;border:0;background:none;padding:8px 0 4px;font-size:11px;colo
 .del{color:var(--red)}#lock{position:fixed;inset:0;background:linear-gradient(170deg,#e0f4f3,#e9f2fb);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:50}
 #lock input{font-size:28px;text-align:center;letter-spacing:8px;background:var(--card);border-radius:10px;padding:10px;width:200px;box-shadow:0 2px 8px #0f2a3a1a}
 #lock[hidden]{display:none}.empty{text-align:center;color:var(--sub);padding:40px 16px}
+.savebtn{background:#0a6c6b;color:#fff;border:0;border-radius:10px;padding:7px 16px;font:inherit;font-size:16px;font-weight:600;box-shadow:0 2px 6px #0a6c6b40;cursor:pointer}
+.savebig{display:block;width:100%;padding:15px;border:0;border-radius:12px;background:#0a6c6b;color:#fff;font:inherit;font-weight:600;box-shadow:0 4px 12px #0a6c6b40;cursor:pointer}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#0a6c6b;color:#fff;padding:10px 20px;border-radius:20px;font-weight:600;opacity:0;transition:.25s;pointer-events:none;z-index:60}#toast.show{opacity:1}
 </style></head><body>
 <div id="app"></div><nav id="nav"></nav><div id="lock" hidden></div>
 <script src="app.js"></script></body></html>

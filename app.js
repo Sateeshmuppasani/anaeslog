@@ -62,18 +62,19 @@ function settingsView(){const has=!!localStorage.getItem(PIN);return `<header><i
 +S('Security',`<div class="row"><label for="pinT">Require passcode</label><input id="pinT" class="sw" type="checkbox"${has?' checked':''}></div><div class="row sub">Locks when the app is closed or sent to the background. If you forget it, the data cannot be unlocked — keep a backup.</div>`)
 +S('Export',`<div class="row" style="cursor:pointer;color:var(--tint)" id="csv">Export CSV (${cases.length} cases)</div><div class="row" style="cursor:pointer;color:var(--tint)" id="bk">Export JSON backup</div><div class="row" style="cursor:pointer;color:var(--tint)" id="imp">Import JSON backup…</div><input type="file" id="impF" accept=".json,application/json" hidden>`)
 +S('Privacy','<div class="row sub">All data stays on this device (in Safari storage for this app). Do not enter names, MRN, CPR or other identifiers. Use a case ID only. Export a JSON backup regularly — deleting the app from the Home Screen or clearing Safari data erases it.</div>')
-+'<div class="sec sub" style="text-align:center">AnaesLog web v1</div>'}
++'<div class="sec sub" style="text-align:center">AnaesLog web v1.1</div>'}
 function render(){const a=document.getElementById('app');const y=scrollY;
-if(editId&&cur()){a.innerHTML=`<header class="inline"><button class="btn" id="back">‹ Cases</button><h1>${esc(cur().caseID)}</h1><span style="width:70px"></span></header><div style="padding:0 16px"><div class="seg">${['Pre-op','Intra-op','Post-op'].map((s,i)=>`<button data-sec="${i}" class="${section==i?'on':''}">${s}</button>`).join('')}</div></div>`+[preop,intraop,postop][section]();}
+if(editId&&cur()){a.innerHTML=`<header class="inline"><button class="btn" id="back">‹ Cases</button><h1>${esc(cur().caseID)}</h1><button class="savebtn" id="saveTop">Save</button></header><div style="padding:0 16px"><div class="seg">${['Pre-op','Intra-op','Post-op'].map((s,i)=>`<button data-sec="${i}" class="${section==i?'on':''}">${s}</button>`).join('')}</div></div>`+[preop,intraop,postop][section]()+'<div class="sec"><button class="savebig" id="saveBot">Save case</button></div>';}
 else{editId=null;a.innerHTML=tab==='cases'?listView():tab==='stats'?statsView():settingsView();}
 document.getElementById('nav').innerHTML=[['cases','📋','Cases'],['stats','📊','Stats'],['settings','⚙︎','Settings']].map(([k,i,l])=>`<button data-tab="${k}" class="${tab==k?'on':''}"><i>${i}</i>${l}</button>`).join('');
 return y}
 function rerender(){const y=scrollY;render();scrollTo(0,y)}
 function addEvent(name){const c=cur();c.events.push({id:uid(),time:new Date().toISOString(),name,note:''});c.events.sort((a,b)=>a.time.localeCompare(b.time));save();rerender();if(navigator.vibrate)navigator.vibrate(20)}
-document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-open],[data-sec],[data-asa],[data-step],[data-ms],[data-ev],[data-evdel],#add,#back,#custAdd,#delCase,#csv,#bk,#imp');if(!t)return;const d=t.dataset;
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tab],[data-open],[data-sec],[data-asa],[data-step],[data-ms],[data-ev],[data-evdel],#add,#back,#saveTop,#saveBot,#custAdd,#delCase,#csv,#bk,#imp');if(!t)return;const d=t.dataset;
 if(d.tab){tab=d.tab;editId=null;render();scrollTo(0,0)}
 else if(d.open){editId=d.open;section=0;openD.clear();render();scrollTo(0,0)}
 else if(t.id==='add'){const c=newCase();cases.push(c);save();editId=c.id;section=0;render();scrollTo(0,0)}
+else if(t.id==='saveTop'||t.id==='saveBot'){const a=document.activeElement;if(a&&a.blur)a.blur();save();toast('Saved ✓');editId=null;tab='cases';render();scrollTo(0,0)}
 else if(t.id==='back'){editId=null;tab='cases';render()}
 else if(d.sec){section=+d.sec;render();scrollTo(0,0)}
 else if(d.asa){cur().asa=+d.asa;save();rerender()}
@@ -122,6 +123,7 @@ L.innerHTML='<img src="logo-wordmark.png" width="220" style="border-radius:18px;
 const go=async()=>{const i=document.getElementById('pinIn');if(await hash(i.value)===localStorage.getItem(PIN)){L.hidden=true;L.innerHTML=''}else{document.getElementById('pinMsg').textContent='Incorrect passcode';i.value=''}};
 document.getElementById('unl').onclick=go;document.getElementById('pinIn').onkeydown=e=>{if(e.key==='Enter')go()};setTimeout(()=>document.getElementById('pinIn')?.focus(),100)}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)lock()});
+function toast(m){let x=document.getElementById('toast');if(!x){x=document.createElement('div');x.id='toast';document.body.appendChild(x)}x.textContent=m;x.className='show';clearTimeout(x._t);x._t=setTimeout(()=>x.className='',1600)}
 render();lock();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
